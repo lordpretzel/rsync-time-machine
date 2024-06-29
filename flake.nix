@@ -60,6 +60,10 @@
             devShells.default = mkShell
               {
                 buildInputs = dependencies;
+
+                shellHook = ''
+                export PATH=${rsync-time-machine}:$PATH
+                '';
               };
           }
       );
