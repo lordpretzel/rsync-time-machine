@@ -32,7 +32,7 @@
           package-version = "1.0";
           package-name = "rsync-time-machine";
           
-        in 
+        in with pkgs;
           {
             ###################################################################
             #                       package                                   #
@@ -40,26 +40,18 @@
             packages = {
               rsync-time-machine = stdenv.mkDerivation {
                 name= "${package-name}";
-                src = ./.; #rsync-time-machine;
+                src = rsync-time-machine;
                 
                 buildInputs = dependencies;
                 nativeBuildInputs = [ makeWrapper ];
                 installPhase = ''
                   mkdir -p $out/bin/
                   mkdir -p $out/share/
-                  cp ${src}/${scriptname} $out/bin/${scriptname}
-                  chmod +x $out/bin/${scriptname}
-                  makeWrapper $out/bin/${scriptname} $out/bin/${scriptname}
+                  cp $src/${scriptname} $out/share/${scriptname}
+                  chmod +x $out/share/${scriptname}
+                  makeWrapper $out/share/${scriptname} $out/bin/${scriptname}
                 '';                
               };
-            };
-            ###################################################################
-            #                       running                                   #
-            ###################################################################
-            apps = {
-              default = simple_script "rsync_tmbackup.sh" [] ''
-                ${scriptname} "''$@"
-              '';
             };
 
             ###################################################################
@@ -67,13 +59,7 @@
             ###################################################################
             devShells.default = mkShell
               {
-                buildInputs = [
-                  bashInteractive
-                ];
-                # runtimeInputs = [ mypython ];
-                # shellHook = ''
-                  
-                # '';
+                buildInputs = dependencies;
               };
           }
       );
